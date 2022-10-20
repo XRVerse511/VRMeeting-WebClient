@@ -164,9 +164,8 @@ function setupAudioConnection() {
         return;
     }
     let newConnection = new RTCMultiConnection();
-    newConnection.socketURL = "https://10.112.79.143:9001/";
-    // newConnection.socketURL = "https://muazkhan.com:9001/";
-    newConnection.socketMessageEvent = "audio-conference-demo";
+    newConnection.socketURL = "/";
+    newConnection.socketMessageEvent = "VRMeeting";
     newConnection.session = {
         audio: true,
         video: false
@@ -189,28 +188,16 @@ function setupAudioConnection() {
     }];
 
     newConnection.audiosContainer = document.getElementById("audios-container");
-    newConnection.onstream = function (event) {
-        let width = newConnection.audiosContainer.clientWidth / 2 - 20;
-        let mediaElement = getHTMLMediaElement(event.mediaElement, {
-            title: event.userid,
-            buttons: ["full-screen"],
-            width: width,
-            showOnMouseEnter: false
-        });
-        newConnection.audiosContainer.appendChild(mediaElement);
-
-        setTimeout(function () {
-            mediaElement.media.play();
-        }, 5000);
-
-        mediaElement.id = event.streamid;
+    newConnection.onstream = function () {
+        let number = parseInt(document.getElementById("participant-number").innerText);
+        number += 1;
+        document.getElementById("participant-number").innerText = number.toString();
     };
 
-    newConnection.onstreamended = function (event) {
-        let mediaElement = document.getElementById(event.streamid);
-        if (mediaElement) {
-            mediaElement.parentNode.removeChild(mediaElement);
-        }
+    newConnection.onstreamended = function () {
+        let number = parseInt(document.getElementById("participant-number").innerText);
+        number -= 1;
+        document.getElementById("participant-number").innerText = number.toString();
     };
 
     return newConnection;
