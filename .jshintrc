@@ -1,20 +1,19 @@
 {
+  "esversion": 8,
   "browser": true,
   "camelcase": true,
   "curly": true,
   "devel": true,
   "eqeqeq": true,
-  "forin": false,
-  "globalstrict": true,
-  "quotmark": "single",
-  "undef": true,
-  "unused": "strict",
+  "globalstrict": false,
+  "quotmark": "double",
   "globals": {
     "RTCMultiConnection": true,
     "RMCDefaultChannel": true,
     "selfNPObject": true,
     "MediaStream": true,
     "AudioContext": true,
-    "onPluginRTCInitialized": true
+    "onPluginRTCInitialized": true,
+    "getHTMLMediaElement": true
   }
 }

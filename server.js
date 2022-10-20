@@ -4,13 +4,14 @@
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
-var httpServer = require("http");
+let httpServer = require("http");
 
 const ioServer = require("socket.io");
 const RTCMultiConnectionServer = require("rtcmulticonnection-server");
+const {pushLogs} = require("rtcmulticonnection-server");
 
-var PORT = 9001;
-var isUseHTTPs = false;
+let PORT = 9001;
+let isUseHTTPs = false;
 
 const jsonPath = {
     config: "config.json",
@@ -23,7 +24,7 @@ const getValuesFromConfigJson =
 const getBashParameters = RTCMultiConnectionServer.getBashParameters;
 const resolveURL = RTCMultiConnectionServer.resolveURL;
 
-var config = getValuesFromConfigJson(jsonPath);
+let config = getValuesFromConfigJson(jsonPath);
 config = getBashParameters(config, BASH_COLORS_HELPER);
 
 // if user didn't modifed "PORT" object
@@ -43,7 +44,7 @@ function serverHandler(request, response) {
 
     // HTTP_GET handling code goes below
     try {
-        var uri, filename;
+        let uri, filename;
 
         try {
             if (!config.dirPath || !config.dirPath.length) {
@@ -232,7 +233,7 @@ function serverHandler(request, response) {
             pushLogs(config, "statSync.isDirectory", e);
         }
 
-        var contentType = "text/plain";
+        let contentType = "text/plain";
         if (filename.toLowerCase().indexOf(".html") !== -1) {
             contentType = "text/html";
         }
@@ -289,20 +290,20 @@ function serverHandler(request, response) {
     }
 }
 
-var httpApp;
+let httpApp;
 
 if (isUseHTTPs) {
     httpServer = require("https");
 
     // See how to use a valid certificate:
     // https://github.com/muaz-khan/WebRTC-Experiment/issues/62
-    var options = {
+    let options = {
         key: null,
         cert: null,
         ca: null
     };
 
-    var pfx = false;
+    let pfx = false;
 
     if (!fs.existsSync(config.sslKey)) {
         console.log(

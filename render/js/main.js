@@ -72,7 +72,7 @@ async function setup() {
     const res = await getServerConfig();
     useWebSocket = res.useWebSocket;
     showPlayButton(true);
-    audioConnection = setupAudioConnection()
+    audioConnection = setupAudioConnection();
     if (audioConnection) {
         console.log("audioConnection socketURL: " + audioConnection.socketURL);
     }
@@ -102,14 +102,14 @@ function onClickPlayButton() {
     const playerDiv = document.getElementById("player");
 
     //Setup Video Players
-    if (document.getElementById("lefteye") == null) {
+    if (document.getElementById("lefteye") === null) {
         lVideo = document.createElement("video");
         lVideo.id = "lefteye";
         lVideo.style.touchAction = "none";
         playerDiv.appendChild(lVideo);
     }
 
-    if (document.getElementById("righteye") == null) {
+    if (document.getElementById("righteye") === null) {
         rVideo = document.createElement("video");
         rVideo.id = "righteye";
         rVideo.style.touchAction = "none";
@@ -174,7 +174,7 @@ function setupAudioConnection() {
     newConnection.mediaConstraints = {
         audio: true,
         video: false
-    }
+    };
     newConnection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: false
@@ -227,8 +227,8 @@ function forceDisconnect() {
 function onDisconnect() {
     const playerDiv = document.getElementById("player");
     //to avoid vrButton deletion because it is deleted by the scene
-    let vrscene = document.getElementById("a-frame-id");
-    vrscene.style.display = "none";
+    let vrScene = document.getElementById("a-frame-id");
+    vrScene.style.display = "none";
 
     for (let i = 0; i < videoPlayers.length; i++) {
         videoPlayers[i].video.remove();
@@ -251,7 +251,9 @@ function ThumbstickMoved(button, handId) {
     data.setFloat32(3, button.detail.x, true);
     data.setFloat32(11, button.detail.y, true);
 
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function AxisChanged(button, hand) {
@@ -273,7 +275,9 @@ function AxisChanged(button, hand) {
     data.setUint8(30, button.detail.changed[3]); // joystick up-down changed
     data.setFloat32(31, button.detail.axis[3], true); // joystick up-down value
 
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function ButtonChanged(button, hand) {
@@ -300,8 +304,9 @@ function ButtonChanged(button, hand) {
     // data.setUint8(3, button.detail.id);
     // data.setUint8(4, button.detail.state.pressed);
     // data.setUint8(5, button.detail.state.touched);
-
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function Trigger(button, hand) {
@@ -325,7 +330,9 @@ function Trigger(button, hand) {
         data.setUint8(5, false);
     }
 
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function setupHandControl(vrScene) {
@@ -405,7 +412,9 @@ function pinchMoved(evt, handId, isEnd) {
         data.setFloat32(11, evt.detail.data.y, true);
     }
 
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function setupHandTracking(vrScene) {
@@ -472,7 +481,10 @@ function sendGrip(handId, isFist) {
     data.setUint8(2, handId);
     data.setUint8(3, VRBoolEvent.Grip);
     data.setUint8(4, isFist);
-    videoConnection && videoConnection.sendMsg(data.buffer);
+
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function setupVRVideo(myCam) {
@@ -547,7 +559,9 @@ function createAFrameVR(parentDiv) {
             data.setUint8(0, InputEvent.VR); //for VR ID
             data.setUint8(1, VRDataType.EnterVR); //for Enter VR
 
-            videoConnection && videoConnection.sendMsg(data.buffer);
+            if (videoConnection) {
+                videoConnection.sendMsg(data.buffer);
+            }
 
             data = new DataView(new ArrayBuffer(10));
             data.setUint8(0, InputEvent.VR); //for VR ID
@@ -563,7 +577,9 @@ function createAFrameVR(parentDiv) {
                 true
             ); //set Height
 
-            videoConnection && videoConnection.sendMsg(data.buffer);
+            if (videoConnection) {
+                videoConnection.sendMsg(data.buffer);
+            }
         }, 500); //wait half a second before sending data so that buffer gets instantiated
     });
 
@@ -574,7 +590,9 @@ function createAFrameVR(parentDiv) {
         data.setUint8(0, InputEvent.VR); //for VR ID
         data.setUint8(1, VRDataType.ExitVR); //for Enter VR
 
-        videoConnection && videoConnection.sendMsg(data.buffer);
+        if (videoConnection) {
+            videoConnection.sendMsg(data.buffer);
+        }
     });
 
     aframeDiv.appendChild(vrScene);
@@ -805,7 +823,9 @@ function checkTrans(pos, rot) {
 }
 
 function sendData(index, i, j, pos, rot) {
-    if (checkTrans(pos, rot)) return;
+    if (checkTrans(pos, rot)) {
+        return;
+    }
     let fingerName = "";
     let jointName = "";
     if (i === 0) {
@@ -868,7 +888,9 @@ function sendData(index, i, j, pos, rot) {
     data.setFloat32(44, rot.z, true);
     data.setFloat32(52, rot.w, true);
 
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 function getHandId(index) {
@@ -885,7 +907,9 @@ function getHandId(index) {
 
 function sendAllData(index) {
     let handId = getHandId(index);
-    if (handId === "") return;
+    if (handId === "") {
+        return;
+    }
     let arr = getHandUnitPosRot(handId);
 
     for (let i = 0; i < arr.length; i++) {
@@ -906,7 +930,9 @@ function sendAllData(index) {
 
 function sendWrist(index) {
     let handId = getHandId(index);
-    if (handId === "") return;
+    if (handId === "") {
+        return;
+    }
 
     let jointAPI = document
         .getElementById(handId)
@@ -915,7 +941,9 @@ function sendWrist(index) {
     let pos = jointAPI.getWrist().getWristPosition();
     let rot = jointAPI.getWrist().getWristQuaternion();
 
-    if (checkTrans(pos, rot)) return;
+    if (checkTrans(pos, rot)) {
+        return;
+    }
 
     // console.log(
     //     handId + " wrist " +
@@ -936,7 +964,9 @@ function sendWrist(index) {
     data.setFloat32(44, rot.z, true);
     data.setFloat32(52, rot.w, true);
 
-    videoConnection && videoConnection.sendMsg(data.buffer);
+    if (videoConnection) {
+        videoConnection.sendMsg(data.buffer);
+    }
 }
 
 AFRAME.registerComponent("update", {
@@ -958,7 +988,9 @@ AFRAME.registerComponent("update", {
         data.setFloat32(43, this.el.object3D.quaternion.z, true);
         data.setFloat32(51, this.el.object3D.quaternion.w, true);
 
-        videoConnection && videoConnection.sendMsg(data.buffer);
+        if (videoConnection) {
+            videoConnection.sendMsg(data.buffer);
+        }
     }
 });
 
@@ -1015,14 +1047,18 @@ AFRAME.registerComponent("hand-tracking-extras", {
     },
     tick: (function () {
         return function () {
-            if (this.isPaused) return;
+            if (this.isPaused) {
+                return;
+            }
             var controller =
                 this.el.components["tracked-controls"] &&
                 this.el.components["tracked-controls"].controller;
 
             var trackedControlsWebXR =
                 this.el.components["tracked-controls-webxr"];
-            if (!trackedControlsWebXR) return;
+            if (!trackedControlsWebXR) {
+                return;
+            }
 
             var referenceSpace = trackedControlsWebXR.system.referenceSpace;
             var frame = this.el.sceneEl.frame;
@@ -1122,11 +1158,15 @@ AFRAME.registerComponent("hand-tracking-extras", {
         this.el.removeEventListener("exit-vr", this.pause);
     },
     getRawJoints() {
-        if (this.HandData) return this.HandData.joints;
+        if (this.HandData) {
+            return this.HandData.joints;
+        }
         return null;
     },
     getJoints() {
-        if (this.HandData) return this.HandData.jointAPI;
+        if (this.HandData) {
+            return this.HandData.jointAPI;
+        }
         return null;
     }
 });
