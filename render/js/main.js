@@ -224,7 +224,7 @@ function onDisconnect() {
     //clearChildren(vrscene);
     videoPlayers = [];
     videoConnection = null;
-    audioConnection = null;
+    // audioConnection = null;
     showPlayButton(true);
 }
 
@@ -641,6 +641,7 @@ function getHandUnitPosRot(handId) {
     let thumbTipRot = jointAPI.getThumbTip().getQuaternion();
     thumbArr[3] = [thumbTipPos, thumbTipRot];
 
+    arr[0] = thumbArr;
     //    let thumbDisArr = [];
     //    let thumbMetDis = minus(thumbMetacarpalPos, wristPos);
     //    let thumbProDis = minus(thumbProximalPos, wristPos);
@@ -649,7 +650,6 @@ function getHandUnitPosRot(handId) {
     //    thumbDisArr.push(thumbMetDis, thumbProDis, thumbDisDis, thumbTipDis);
     //    disArr.push(thumbDisArr);
     //
-    //    arr[0] = thumbArr;
 
     // Index
     let indexArr = [];
@@ -673,6 +673,7 @@ function getHandUnitPosRot(handId) {
     let indexTipRot = jointAPI.getIndexTip().getQuaternion();
     indexArr[4] = [indexTipPos, indexTipRot];
 
+    arr[1] = indexArr;
     //    let indexDisArr = []
     //    let indexProDis = minus(indexProximalPos, wristPos);
     //    let indexIntDis = minus(indexIntermediatePos, wristPos);
@@ -680,8 +681,6 @@ function getHandUnitPosRot(handId) {
     //    let indexTipDis = minus(indexTipPos, wristPos);
     //    indexDisArr.push(indexProDis, indexIntDis, indexDisDis, indexTipDis);
     //    disArr.push(indexDisArr);
-    //
-    //    arr[1] = indexArr;
 
     // Middle
     let middleArr = [];
@@ -707,6 +706,7 @@ function getHandUnitPosRot(handId) {
     let middleTipRot = jointAPI.getMiddleTip().getQuaternion();
     middleArr[4] = [middleTipPos, middleTipRot];
 
+    arr[2] = middleArr;
     //    let middleDisArr = [];
     //    let middleProDis = minus(middleProximalPos, wristPos);
     //    let middleIntDis = minus(middleIntermediatePos, wristPos);
@@ -714,8 +714,6 @@ function getHandUnitPosRot(handId) {
     //    let middleTipDis = minus(middleTipPos, wristPos);
     //    middleDisArr.push(middleProDis, middleIntDis, middleDisDis, middleTipDis);
     //    disArr.push(middleDisArr);
-    //
-    //    arr[2] = middleArr;
 
     // Ring
     let ringArr = [];
@@ -739,6 +737,8 @@ function getHandUnitPosRot(handId) {
     let ringTipRot = jointAPI.getRingTip().getQuaternion();
     ringArr[4] = [ringTipPos, ringTipRot];
 
+    arr[3] = ringArr;
+
     //    let ringDisArr = [];
     //    let ringProDis = minus(ringProximalPos, wristPos);
     //    let ringIntDis = minus(ringIntermediatePos, wristPos);
@@ -746,8 +746,6 @@ function getHandUnitPosRot(handId) {
     //    let ringTipDis = minus(ringTipPos, wristPos);
     //    ringDisArr.push(ringProDis, ringIntDis, ringDisDis, ringTipDis);
     //    disArr.push(ringDisArr);
-    //
-    //    arr[3] = ringArr;
 
     // Little
     let littleArr = [];
