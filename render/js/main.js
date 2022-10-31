@@ -122,9 +122,9 @@ function onClickPlayButton() {
     //setupVideoPlayer([lVideo]).then(value => connection = value); //for single stream
     setupVideoPlayer([lVideo, rVideo]).then((value) => (videoConnection = value));
     if (audioConnection) {
-        let gameId = document.getElementById("gameID").value;
-        audioConnection.token = gameId;
-        audioConnection.openOrJoin(gameId);
+        let roomID = document.getElementById("roomID").value;
+        audioConnection.token = roomID;
+        audioConnection.openOrJoin(roomID);
     }
 }
 
