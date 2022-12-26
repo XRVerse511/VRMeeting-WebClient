@@ -4,7 +4,7 @@
     "homePage": "/entry/index.html",
     "socketMessageEvent": "RTCMultiConnection-Message",
     "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-    "port": "9001",
+    "port": "7777",
     "enableLogs": "false",
     "autoRebootServerOnFailure": "false",
     "isUseHTTPs": "true",
