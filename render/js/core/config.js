@@ -20,4 +20,3 @@ export function getRTCConfiguration() {
     ];
     return config;
 }
-

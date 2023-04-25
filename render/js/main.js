@@ -33,6 +33,8 @@ let videoPlayers = [];
 let useWebSocket;
 let lReady = false;
 let rReady = false;
+let isRecord = false;
+let recorder;
 
 let lVideo, rVideo;
 
@@ -98,6 +100,35 @@ function showPlayButton(showConnect = true) {
     forceDCButton.addEventListener("click", forceDisconnect);
 }
 
+function wait(delayInMS) {
+    return new Promise((resolve) => setTimeout(resolve, delayInMS));
+}
+
+function startRecording(stream, lengthInMS) {
+    let videoBps = document.getElementById("video-bps-select").value;
+    let recorder = new MediaRecorder(stream, {
+        videoBitsPerSecond: videoBps,
+    });
+    let data = [];
+
+    recorder.ondataavailable = (event) => data.push(event.data);
+    recorder.start();
+
+    let stopped = new Promise((resolve, reject) => {
+        recorder.onstop = resolve;
+        recorder.onerror = (event) => reject(event.name);
+    });
+
+    let recorded = wait(lengthInMS).then(() => {
+        if (recorder.state === "recording") {
+            recorder.stop();
+        }
+    });
+
+    return Promise.all([stopped, recorded]).then(() => data);
+}
+
+
 function onClickPlayButton() {
     const playerDiv = document.getElementById("player");
 
@@ -117,12 +148,35 @@ function onClickPlayButton() {
         playerDiv.appendChild(rVideo);
     }
 
+    if (isRecord === true) {
+        let downloadButton = document.getElementById("download");
+
+        lVideo.onplay = function () {
+            // let timeInSecond = document.getElementById("duration").value;
+            let timeInSecond = 36;
+            let framerate = 60;
+            let stream = lVideo.captureStream(framerate);
+            downloadButton.href = stream;
+            startRecording(stream, timeInSecond * 1000)
+                .then((recordedChunks) => {
+                    let recordBlob = new Blob(recordedChunks, {type: "video/mp4"});
+                    downloadButton.href = URL.createObjectURL(recordBlob);
+                    downloadButton.download = "RecordedVideo.mp4";
+                });
+        };
+
+        lVideo.onclose = function() {
+            recorder.stop();
+        };
+    }
+
     createAFrameVR(playerDiv);
 
-    //setupVideoPlayer([lVideo]).then(value => connection = value); //for single stream
+    // setupVideoPlayer([lVideo]).then(value => connection = value); //for single stream
     setupVideoPlayer([lVideo, rVideo]).then((value) => (videoConnection = value));
     if (audioConnection) {
-        let roomID = document.getElementById("roomID").value;
+        // let roomID = document.getElementById("roomID").value;
+        let roomID = "4";
         audioConnection.token = roomID;
         audioConnection.openOrJoin(roomID);
     }
@@ -146,8 +200,12 @@ async function setupVideoPlayer(elements) {
 
     newConnection.addAudioStream(videoPlayers[0]); //add audio stream to just first video
 
+    let gameID = Number.parseInt(document.getElementById("gameID").value);
+    if (gameID === null || isNaN(gameID) || gameID === 0) {
+        gameID = 123;
+    }
     await newConnection.startSignaling({
-        user: document.getElementById("gameID").value
+        user: gameID
     });
     newConnection.ondisconnect = onDisconnect;
     newConnection.onanswer = onAnswer;
@@ -411,7 +469,9 @@ function setupHandTracking(vrScene) {
     leftHand.setAttribute("hand-tracking-controls", "hand", "left");
     leftHand.setAttribute("hand-tracking-extras", "");
     leftHand.setAttribute("synchand", "index", "1");
-    // leftHand.setAttribute("visible", false);
+    // make left hand invisible
+    leftHand.setAttribute("visible", false);
+    leftHand.setAttribute("width", 0);
     vrScene.appendChild(leftHand);
 
     leftHand.addEventListener("hand-tracking-extras-ready", () => {
@@ -438,7 +498,9 @@ function setupHandTracking(vrScene) {
     rightHand.setAttribute("hand-tracking-controls", "hand", "right");
     rightHand.setAttribute("hand-tracking-extras", "");
     rightHand.setAttribute("synchand", "index", "2");
-    // rightHand.setAttribute("visible", false);
+    // make right hand invisible
+    rightHand.setAttribute("visible", false);
+    rightHand.setAttribute("width", 0);
     vrScene.appendChild(rightHand);
 
     rightHand.addEventListener("hand-tracking-extras-ready", () => {
